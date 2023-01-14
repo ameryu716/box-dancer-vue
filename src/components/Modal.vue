@@ -7,16 +7,14 @@
                 :label-width="80"
                 :model="form"
                 :rules="rules"
-                size="large"
-            >
-                <n-form-item label="テキスト" path="user.text">
-                    <n-input v-model:value="form.text" placeholder="Goog..." />
+                size="large">
+                <n-form-item label="テキスト" path="user.name">
+                    <n-input v-model:value="form.name" placeholder="Goog..." />
                 </n-form-item>
                 <n-form-item label="URL" path="user.url">
                     <n-input
                         v-model:value="form.url"
-                        placeholder="https://a..."
-                    />
+                        placeholder="https://a..." />
                 </n-form-item>
                 <n-form-item>
                     <n-button @click="send">送信</n-button>
@@ -45,14 +43,14 @@ const formRef = ref<FormInst | null>(null);
 
 const form = reactive({
     id: null,
-    text: "",
+    name: "",
     url: "",
 });
 
 const message = useMessage();
 
 const rules = {
-    text: {
+    name: {
         required: true,
         message: "表示する文字を入力してください。",
         trigger: ["input", "blur"],

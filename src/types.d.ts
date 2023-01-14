@@ -1,13 +1,14 @@
 interface type_box {
-    id: number,
-    name: string,
-    url: string,
-    children: type_box[]
+	id: number;
+	name: string;
+	url: string;
+	parent_id: null | number;
 }
 
 interface type_creation_box {
-    name: string,
-    url: string,
+	parent_id: null | number;
+	name: string;
+	url: string;
 }
 
-export {type_box,type_creation_box}
+export { type_box, type_creation_box };
