@@ -19,6 +19,9 @@ function setMemory(data: type_box[]) {
 function createBox(object_data: type_box) {
     const data = getMemory();
 
+    const max_id = Math.max(...data.map((d: type_box) => d.id), 0) + 1;
+    object_data.id = max_id;
+
     data.push(object_data);
 
     const to_send = JSON.stringify(data);

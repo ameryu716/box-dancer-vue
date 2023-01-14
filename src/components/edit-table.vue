@@ -1,24 +1,23 @@
 <template>
     <n-modal v-model:show="is_show" class="modal">
         <n-card
-            style="width: 900px; height: 600px"
+            style="width: 1000px; height: 600px"
             title="編集"
             :bordered="false"
             size="huge"
             role="dialog"
-            aria-modal="true">
+            aria-modal="true"
+        >
             <template #header-extra>
                 <n-button class="ms-auto" @click="close" strong secondary>
                     <n-icon size="24"><close-icon /></n-icon>
                 </n-button>
             </template>
-            <n-data-table
-                :columns="columns"
-                :data="data"
-                :row-key="rowKey" />
+            <n-data-table :columns="columns" :data="data" :row-key="rowKey" />
             <template #footer>
                 <div class="fl">
-                    <n-button type="info" @click="addRow">増やす
+                    <n-button type="info" @click="addRow"
+                        >増やす
                         <n-icon size="24">
                             <add />
                         </n-icon>
@@ -29,7 +28,8 @@
                         primary
                         class="ms-auto"
                         type="primary"
-                        @click="enter">確定
+                        @click="enter"
+                        >確定
                     </n-button>
                 </div>
             </template>
@@ -43,6 +43,7 @@ import {
     DataTableColumns,
     NButton,
     NIcon,
+    NSelect,
     useDialog,
     useMessage,
 } from "naive-ui";
@@ -62,33 +63,59 @@ const data = ref<type_box[]>([]);
 const dialog = useDialog();
 const message = useMessage();
 
+const select_options = computed(() => {
+    return [
+        {
+            label: "親ID",
+            value: "",
+            disabled: true,
+        },
+        {
+            label: "",
+            value: null,
+        },
+        ...data.value.map((b) => {
+            return {
+                label: String(b.id),
+                value: b.id,
+            };
+        }),
+    ];
+});
+
 const columns: DataTableColumns<type_box> = [
     {
         title: "#",
         key: "id",
-        width: "100",
+        width: "50",
+    },
+    {
+        title: "親ID",
+        key: "parent_id",
+        width: "80",
+        render(row, index) {
+            return h(NSelect, {
+                "modelValue:value": row.parent_id,
+                options: select_options.value.filter((s) => s.value !== row.id),
+                placeholder: "親ID",
+                onUpdateValue(v) {
+                    console.log(v);
+
+                    row.parent_id = v;
+                },
+            });
+        },
     },
     {
         width: "200",
         title: "名称",
         key: "name",
-        render({ name, id }, index) {
+        render(row, index) {
             return h(NInput, {
                 placeholder: "名称を入力...",
-                value: name,
+                value: row.name,
                 onUpdateValue(v) {
-                    console.log(id);
-
-                    const find = <any>(
-                        [
-                            ...data.value
-                                .map((r) => r.children.map((r2) => r2.children))
-                                .flat(2),
-                            ...data.value,
-                        ].find((r) => r.id === id)
-                    );
-
-                    find.name = v;
+                    row.name = v;
                 },
             });
         },
@@ -117,7 +144,7 @@ const columns: DataTableColumns<type_box> = [
                 {
                     type: "info",
                     onClick() {
-                        addChidren(data.value[index].id);
+                        addChidren(row.id);
                     },
                 },
                 h(NIcon, null, { default: () => h(Add) })
@@ -156,18 +183,7 @@ const rowKey = (row: type_box) => {
  */
 
 const max_id = computed(() => {
-    let max_id = 0;
-    for (const d of data.value) {
-        max_id = Math.max(max_id, d.id);
-        for (const d1 of d.children) {
-            max_id = Math.max(max_id, d1.id);
-            for (const d2 of d1.children) {
-                max_id = Math.max(max_id, d2.id);
-            }
-        }
-    }
-
-    return max_id + 1;
+    return Math.max(...data.value.map((d) => d.id), 0) + 1;
 });
 
 /**

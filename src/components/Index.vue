@@ -31,25 +31,32 @@
         </header>
         <main>
             <box
-                v-for="b in boxes"
+                v-for="b in assembled_data"
                 :name="b.name"
                 :url="b.url"
-                @view-modal-open="openModal(b.id)"
+                :is_folder="b.is_folder"
+                @folder-open-toggle="folderOpenToggle(b.id)"
             />
+
             <creation-box @create-modal-open="openModal(0)" />
-            <modal v-if="modal_show" :data_id="data_id" @send="createBox" />
+            <modal
+                v-if="modal_show"
+                :data_id="data_id"
+                @send="createBox"
+                @close="closeModal"
+            />
             <edit-table v-if="edit_table_show" @close="closeEditTable" />
         </main>
     </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, unref } from "vue";
 import {
     local_storage_key,
     getMemory,
     createBox as create,
 } from "../scripts/util";
-import { type_box } from "../types";
+import { type_box, type_assembled_box } from "../types";
 import Box from "./Box.vue";
 import CreationBox from "./CreationBox.vue";
 import Modal from "./Modal.vue";
@@ -60,6 +67,31 @@ const boxes = ref<type_box[]>([]);
 const modal_show = ref(false);
 const edit_table_show = ref(false);
 const data_id = ref(0);
+
+/**
+ * Computed ---------------------------------------------------------
+ */
+
+const assembled_data = computed(() => {
+    const _boxes: type_assembled_box[] = JSON.parse(
+        JSON.stringify(
+            [...unref(boxes)].map((b) => {
+                return {
+                    ...b,
+                    children: [],
+                };
+            })
+        )
+    );
+
+    const assembled = [..._boxes];
+
+    return assembled;
+});
+
+/**
+ * Methods ----------------------------------------------------------
+ */
 
 function refresh() {
     boxes.value = getMemory();
@@ -92,6 +124,8 @@ function createBox(value: type_box) {
     closeModal();
     refresh();
 }
+
+function folderOpenToggle(id: number) {}
 
 onMounted(() => {
     refresh();
