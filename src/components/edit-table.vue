@@ -6,8 +6,7 @@
             :bordered="false"
             size="huge"
             role="dialog"
-            aria-modal="true"
-        >
+            aria-modal="true">
             <template #header-extra>
                 <n-button class="ms-auto" @click="close" strong secondary>
                     <n-icon size="24"><close-icon /></n-icon>
@@ -16,14 +15,13 @@
             <n-data-table
                 :columns="columns"
                 :data="data"
-                :row-key="rowKey"
-                default-expand-all
-            />
+                :row-key="rowKey" />
             <template #footer>
                 <div class="fl">
-                    <n-button type="info" @click="addRow"
-                        >増やす
-                        <n-icon size="24"><add /></n-icon>
+                    <n-button type="info" @click="addRow">増やす
+                        <n-icon size="24">
+                            <add />
+                        </n-icon>
                     </n-button>
 
                     <n-button
@@ -31,8 +29,7 @@
                         primary
                         class="ms-auto"
                         type="primary"
-                        @click="enter"
-                        >確定
+                        @click="enter">確定
                     </n-button>
                 </div>
             </template>
@@ -183,7 +180,7 @@ function addRow() {
         id: max,
         name: "",
         url: "",
-        children: [],
+        parent_id: null,
     });
 }
 function deleteRow(id: number) {
@@ -194,11 +191,11 @@ function deleteRow(id: number) {
 
 function addChidren(id: number) {
     const max = unref(max_id);
-    (<any>data.value.find((d) => d.id === id)).children.push({
+    data.value.push({
+        parent_id: id,
         id: max,
         name: "",
         url: "",
-        children: [],
     });
 }
 
