@@ -19,20 +19,16 @@ function setMemory(data: type_box[]) {
 }
 
 function createBox(object_data: type_box) {
-    try {
-        const data = getMemory();
+    const data = getMemory();
 
-        const max_id = Math.max(...data.map((d: type_box) => d.id), 0) + 1;
-        object_data.id = max_id;
+    const max_id = Math.max(...data.map((d: type_box) => d.id), 0) + 1;
+    object_data.id = max_id;
 
-        data.push(object_data);
+    data.push(object_data);
 
-        const to_send = JSON.stringify(data);
+    const to_send = JSON.stringify(data);
 
-        localStorage.setItem(local_storage_key, to_send);
-    } catch (e) {
-        throw new Error(e);
-    }
+    localStorage.setItem(local_storage_key, to_send);
 }
 
 type confirm_type = "info" | "warn" | "error" | "success";

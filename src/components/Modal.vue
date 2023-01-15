@@ -161,7 +161,7 @@ function send(e: MouseEvent) {
         } else {
             const value = formRef.value;
 
-            emits("send", unref(form));
+            emits("send", <any>unref(form));
         }
     });
 }

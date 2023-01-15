@@ -3,7 +3,6 @@
         <header class="fl">
             <div>
                 <h1 class="mb-2">Box Dancer</h1>
-                <n-gradient-text type="success">{{ version }}</n-gradient-text>
             </div>
 
             <n-button
