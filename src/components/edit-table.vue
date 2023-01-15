@@ -42,6 +42,7 @@ import { computed, defineComponent, h, onMounted, ref, unref } from "vue";
 import {
     DataTableColumns,
     NButton,
+    NCheckbox,
     NIcon,
     NSelect,
     useDialog,
@@ -63,26 +64,6 @@ const data = ref<type_box[]>([]);
 const dialog = useDialog();
 const message = useMessage();
 
-const select_options = computed(() => {
-    return [
-        {
-            label: "親ID",
-            value: "",
-            disabled: true,
-        },
-        {
-            label: "",
-            value: null,
-        },
-        ...data.value.map((b) => {
-            return {
-                label: String(b.id),
-                value: b.id,
-            };
-        }),
-    ];
-});
-
 const columns: DataTableColumns<type_box> = [
     {
         title: "#",
@@ -90,18 +71,34 @@ const columns: DataTableColumns<type_box> = [
         width: "50",
     },
     {
-        title: "親ID",
+        title: "親",
         key: "parent_id",
-        width: "80",
+        width: "130",
         render(row, index) {
             return h(NSelect, {
+                value: row.parent_id,
                 "modelValue:value": row.parent_id,
-                options: select_options.value.filter((s) => s.value !== row.id),
+                options: <any>(
+                    select_options(row.id).filter((s) => s.value !== row.id)
+                ),
                 placeholder: "親ID",
-                onUpdateValue(v) {
-                    console.log(v);
-
+                onUpdateValue(v: number) {
                     row.parent_id = v;
+                },
+            });
+        },
+    },
+    {
+        title: "フォルダー",
+        key: "is_folder",
+        width: "80",
+        align: "center",
+        render(row, index) {
+            return h(NCheckbox, {
+                checked: row.is_folder,
+                "modelValue:checked": row.is_folder,
+                onUpdateChecked(v) {
+                    row.is_folder = v;
                 },
             });
         },
@@ -128,6 +125,7 @@ const columns: DataTableColumns<type_box> = [
             return h(NInput, {
                 placeholder: "URLを入力...",
                 value: row.url,
+                disabled: row.is_folder,
                 onUpdateValue(v) {
                     data.value[index].url = v;
                 },
@@ -147,7 +145,7 @@ const columns: DataTableColumns<type_box> = [
                         addChidren(row.id);
                     },
                 },
-                h(NIcon, null, { default: () => h(Add) })
+                () => h(NIcon, { component: Add })
             );
         },
     },
@@ -164,7 +162,7 @@ const columns: DataTableColumns<type_box> = [
                         deleteRow(data.value[index].id);
                     },
                 },
-                h(NIcon, null, { default: () => h(DEL) })
+                () => h(NIcon, { component: DEL })
             );
         },
     },
@@ -187,6 +185,34 @@ const max_id = computed(() => {
 });
 
 /**
+ * Computedのようなもの
+ */
+const all_folders = (id: number) => {
+    // 自分ではないフォルダー
+    return data.value.filter((b) => b.is_folder && b.id !== id);
+};
+
+const select_options = (id: number) => {
+    return [
+        {
+            label: "親ID",
+            value: "",
+            disabled: true,
+        },
+        {
+            label: "",
+            value: null,
+        },
+        ...all_folders(id).map((b) => {
+            return {
+                label: String(b.name),
+                value: b.id,
+            };
+        }),
+    ];
+};
+
+/**
  * Methods ------------------------------------------------------
  */
 
@@ -197,6 +223,7 @@ function addRow() {
         name: "",
         url: "",
         parent_id: null,
+        is_folder: false,
     });
 }
 function deleteRow(id: number) {
@@ -212,6 +239,7 @@ function addChidren(id: number) {
         id: max,
         name: "",
         url: "",
+        is_folder: false,
     });
 }
 

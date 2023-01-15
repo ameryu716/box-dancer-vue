@@ -1,14 +1,19 @@
 <template>
-    <div class="box fl j-c">
-        <span>{{ name }}</span>
-        <a :href="url" target="_blank"></a>
-    </div>
     <div
+        v-if="is_folder"
         class="folder-box fl j-c"
-        :class="{ rotating: rotating }"
+        :class="{ 'is-open': is_open }"
         @click="folderOpenToggle"
     >
         <span>{{ name }}</span>
+    </div>
+    <div
+        v-else
+        class="box fl j-c"
+        :style="{ 'box-shadow': '0 0 3px 1px ' + color }"
+    >
+        <span>{{ name }}</span>
+        <a :href="url" target="_blank"></a>
     </div>
 </template>
 <script lang="ts" setup>
@@ -18,6 +23,8 @@ const props = defineProps<{
     url: string;
     name: string;
     is_folder: boolean;
+    is_open: boolean;
+    color: string;
 }>();
 
 const rotating = ref(false);
@@ -38,7 +45,7 @@ function folderOpenToggle() {
     position: relative;
     width: 120px;
     height: 120px;
-    box-shadow: 0 0 3px 1px rgba($color: #000000, $alpha: 0.6);
+    // box-shadow: 0 0 3px 1px rgba($color: #000000, $alpha: 0.6);
     cursor: pointer;
     &:hover {
         filter: drop-shadow(0 0 1em color.$glass);
@@ -78,8 +85,9 @@ function folderOpenToggle() {
         }
     }
 
-    &.rotating {
-        transform: rotateZ("720deg");
+    &.is-open {
+        border-color: rgba($color: #64dd59, $alpha: 0.8);
+        transform: rotateZ(360deg);
     }
 }
 </style>

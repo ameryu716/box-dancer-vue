@@ -23,7 +23,14 @@
                 </template>
             </n-button>
 
-            <n-button strong secondary type="primary" class="ms-2" size="large">
+            <n-button
+                strong
+                secondary
+                type="primary"
+                class="ms-2"
+                size="large"
+                @click="openJson"
+            >
                 <template #icon>
                     <n-icon size="28"><json /></n-icon>
                 </template>
@@ -31,10 +38,13 @@
         </header>
         <main>
             <box
-                v-for="b in assembled_data"
+                v-for="(b, index) in assembled_data"
                 :name="b.name"
                 :url="b.url"
                 :is_folder="b.is_folder"
+                :is_open="b.is_open"
+                :color="index % 2 === 1 ? set_color : default_box_color"
+                v-show="!b.hide"
                 @folder-open-toggle="folderOpenToggle(b.id)"
             />
 
@@ -42,31 +52,47 @@
             <modal
                 v-if="modal_show"
                 :data_id="data_id"
+                :all_boxes="boxes"
                 @send="createBox"
                 @close="closeModal"
             />
             <edit-table v-if="edit_table_show" @close="closeEditTable" />
+
+            <json-view v-if="json_show" :json="json_data" @close="closeJSON" />
         </main>
     </div>
 </template>
 <script lang="ts" setup>
+// Framework
 import { computed, onMounted, ref, unref } from "vue";
+import { DataTable, Json } from "@vicons/carbon";
+import { useMessage } from "naive-ui";
+// Any
 import {
     local_storage_key,
     getMemory,
     createBox as create,
 } from "../scripts/util";
+// Type
 import { type_box, type_assembled_box } from "../types";
+
+// Component
 import Box from "./Box.vue";
 import CreationBox from "./CreationBox.vue";
 import Modal from "./Modal.vue";
-import { DataTable, Json } from "@vicons/carbon";
 import editTable from "./edit-table.vue";
+import JsonView from "./JsonView.vue";
 
-const boxes = ref<type_box[]>([]);
+const boxes = ref<type_assembled_box[]>([]);
 const modal_show = ref(false);
 const edit_table_show = ref(false);
+const json_show = ref(false);
 const data_id = ref(0);
+const json_data = ref("");
+const message = useMessage();
+
+const default_box_color = ref("#00000099");
+const set_color = ref("#f32f9399");
 
 /**
  * Computed ---------------------------------------------------------
@@ -78,11 +104,12 @@ const assembled_data = computed(() => {
             [...unref(boxes)].map((b) => {
                 return {
                     ...b,
-                    children: [],
                 };
             })
         )
     );
+
+    console.log(_boxes.length);
 
     const assembled = [..._boxes];
 
@@ -94,7 +121,11 @@ const assembled_data = computed(() => {
  */
 
 function refresh() {
-    boxes.value = getMemory();
+    boxes.value = getMemory().map((b: type_assembled_box) => {
+        b.hide = b.parent_id !== null; //子
+        b.is_open = false; //フォルダー
+        return b;
+    });
 }
 
 function openModal(id: number) {
@@ -114,18 +145,38 @@ function closeEditTable() {
     edit_table_show.value = false;
 }
 
-function createBox(value: type_box) {
-    if (data_id.value === 0) {
-        create(value);
-    } else {
-        console.log("edit");
-        console.log(value);
-    }
-    closeModal();
-    refresh();
+function openJson() {
+    json_data.value = JSON.stringify(boxes.value);
+    json_show.value = true;
 }
 
-function folderOpenToggle(id: number) {}
+function closeJSON() {
+    json_show.value = false;
+}
+
+function createBox(value: type_box) {
+    try {
+        if (data_id.value === 0) {
+            create(value);
+        }
+        message.success("作成しました。");
+    } finally {
+        closeModal();
+        refresh();
+    }
+}
+
+function folderOpenToggle(id: number) {
+    boxes.value
+        .filter((b) => b.id === id || b.parent_id === id)
+        .forEach((b) => {
+            if (b.id === id) {
+                b.is_open = !b.is_open;
+            } else {
+                b.hide = !b.hide;
+            }
+        });
+}
 
 onMounted(() => {
     refresh();

@@ -19,17 +19,17 @@
                 :rules="rules"
                 size="large"
             >
-                <n-form-item label="テキスト" path="user.name">
+                <n-form-item label="テキスト" path="name">
                     <n-input v-model:value="form.name" placeholder="Goog..." />
                 </n-form-item>
-                <n-form-item label="URL" path="user.url">
+                <n-form-item label="URL" path="url">
                     <n-input
                         v-model:value="form.url"
                         placeholder="https://a..."
                         :disabled="form.is_folder"
                     />
                 </n-form-item>
-                <n-form-item label="親" path="user.parent_id">
+                <n-form-item label="親" path="parent_id">
                     <n-select
                         v-model:value="form.parent_id"
                         :options="select_options"
@@ -57,14 +57,15 @@
 </template>
 <script lang="ts" setup>
 import { getDate } from "date-fns";
-import { FormInst, useMessage } from "naive-ui";
+import { FormInst, FormItemRule, useMessage } from "naive-ui";
 import { computed, onMounted, reactive, ref, unref } from "vue";
 import { getMemory } from "../scripts/util";
-import { type_box } from "../types";
+import { type_assembled_box, type_box } from "../types";
 import { Add, Close as closeIcon, Delete as DEL } from "@vicons/carbon";
 
 const props = defineProps<{
     data_id: number;
+    all_boxes: type_assembled_box[];
 }>();
 
 const emits = defineEmits<{
@@ -76,7 +77,7 @@ const is_show = ref(false);
 
 const formRef = ref<FormInst | null>(null);
 
-const all_boxs = ref<type_box[]>([]);
+const all_folders = ref<type_box[]>([]);
 
 const form = reactive({
     id: null,
@@ -93,11 +94,32 @@ const rules = {
         required: true,
         message: "表示する文字を入力してください。",
         trigger: ["input", "blur"],
+        validator(rule: FormItemRule, value: string) {
+            if (value.length === 0) {
+                return new Error("名称を入力してください。");
+            }
+            if (unref(props.all_boxes).some((b) => b.name === value)) {
+                return new Error("名称が他のボックスと重複しています。");
+            }
+
+            return true;
+        },
     },
     url: {
         required: true,
-        message: "URLを入力してください。",
+        // message: "URLを入力してください。",
         trigger: ["input", "blur"],
+        validator(rule: FormItemRule, value: string) {
+            const regex =
+                /https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+/g;
+            console.log("A");
+
+            if (!regex.test(value)) {
+                return new Error("URL形式が正しくありません。");
+            }
+
+            return true;
+        },
     },
 };
 
@@ -112,15 +134,15 @@ const title = computed(() => {
 const select_options = computed(() => {
     return [
         {
-            label: "階層作成する場合は親ボックスのIDを入力してください。",
+            label: "階層作成する場合は親ボックスを入力してください。",
             value: "a",
             disabled: true,
         },
-        ...all_boxs.value
+        ...all_folders.value
             .filter((b) => b.id !== form.id)
             .map((b) => {
                 return {
-                    label: String(b.id),
+                    label: String(b.name),
                     value: b.id,
                 };
             }),
@@ -134,18 +156,12 @@ const select_options = computed(() => {
 function send(e: MouseEvent) {
     e.preventDefault();
     formRef.value?.validate((errors) => {
-        console.log(errors);
-
         if (errors) {
-            console.log(errors);
-            message.error("Invalid");
+            message.warning("内容を確認してください。");
         } else {
             const value = formRef.value;
 
-            console.log(value);
             emits("send", unref(form));
-
-            message.success("Valid");
         }
     });
 }
@@ -155,17 +171,8 @@ function close() {
 }
 
 onMounted(() => {
-    // if (props.data_id !== null) {
-    //     const data = getMemory();
-    //     const view_data = data.filter((d: type_box) => d.id === props.data_id);
-
-    //     for (const o in form) {
-    //         form[o] = view_data[o];
-    //     }
-    // }
-
     is_show.value = true;
-    all_boxs.value = getMemory();
+    all_folders.value = getMemory().filter((b: type_box) => b.is_folder);
 });
 </script>
 <style lang="scss" scoped>

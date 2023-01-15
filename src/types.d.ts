@@ -18,8 +18,9 @@ interface type_assembled_box {
     name: string;
     url: string;
     parent_id: null | number;
+    is_open: boolean;
     is_folder: boolean;
-    hide?: boolean;
+    hide: boolean;
 }
 
 export { type_box, type_creation_box, type_assembled_box };
