@@ -3,11 +3,7 @@
         <header class="fl">
             <div>
                 <h1 class="mb-2">Box Dancer</h1>
-                <n-breadcrumb>
-                    <n-breadcrumb-item> Home</n-breadcrumb-item>
-                    <!-- <n-icon :component="ChevronRight" /> -->
-                    <!-- <n-breadcrumb-item> Account</n-breadcrumb-item> -->
-                </n-breadcrumb>
+                <n-gradient-text type="success">{{ version }}</n-gradient-text>
             </div>
 
             <n-button
