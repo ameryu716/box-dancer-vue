@@ -18,6 +18,10 @@ function setMemory(data: type_box[]) {
     localStorage.setItem(local_storage_key, after);
 }
 
+function setMemoryFromJson(json: string) {
+    localStorage.setItem(local_storage_key, json);
+}
+
 function createBox(object_data: type_box) {
     const data = getMemory();
 
@@ -37,14 +41,16 @@ async function niConfirm(
     dialog: any,
     type: confirm_type,
     title = "",
-    message = ""
+    message = "",
+    confirm_text = "確定",
+    cancel_text = "やめる"
 ): Promise<void> {
     return new Promise((resolve, reject) => {
         const option = {
-            title: "確定",
-            content: "本当に保存しますか？",
-            positiveText: "確定",
-            negativeText: "キャンセル",
+            title: title,
+            content: message,
+            positiveText: confirm_text,
+            negativeText: cancel_text,
             onPositiveClick: () => {
                 resolve();
             },
@@ -58,7 +64,7 @@ async function niConfirm(
                 dialog.info(option);
                 break;
             case "warn":
-                dialog.warn(option);
+                dialog.warning(option);
                 break;
             case "error":
                 dialog.error(option);
@@ -80,4 +86,12 @@ function copy(text: string | undefined | null) {
     }
 }
 
-export { local_storage_key, createBox, getMemory, setMemory, niConfirm, copy };
+export {
+    local_storage_key,
+    createBox,
+    getMemory,
+    setMemory,
+    niConfirm,
+    copy,
+    setMemoryFromJson,
+};

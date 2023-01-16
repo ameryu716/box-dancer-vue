@@ -38,6 +38,12 @@ h1 {
   &.j-c {
     justify-content: center;
   }
+  &.j-end {
+    justify-content: end;
+  }
+  &.j-st {
+    justify-content: start;
+  }
 }
 
 .mt-1 {
@@ -61,6 +67,12 @@ h1 {
 }
 .mb-2 {
   margin-bottom: 0.5rem;
+}
+
+.border-item {
+  border-radius: 0.25rem;
+  padding: 0.4rem;
+  box-shadow: 0 0 2px 1px rgba($color: #fff, $alpha: 0.2);
 }
 
 @media (prefers-color-scheme: light) {

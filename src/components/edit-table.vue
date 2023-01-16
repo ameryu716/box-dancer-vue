@@ -1,7 +1,7 @@
 <template>
     <n-modal v-model:show="is_show" class="modal">
         <n-card
-            style="width: 1000px; height: 600px"
+            style="width: 1050px; height: 600px"
             title="編集"
             :bordered="false"
             size="huge"

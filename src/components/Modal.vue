@@ -110,8 +110,8 @@ const rules = {
         // message: "URLを入力してください。",
         trigger: ["input", "blur"],
         validator(rule: FormItemRule, value: string) {
-            if(form.is_folder) return true;
-            if(value.length === 0) {
+            if (form.is_folder) return true;
+            if (value.length === 0) {
                 return new Error("URLwonyuuryokusitekudasai.");
             }
             const regex =
@@ -184,11 +184,5 @@ onMounted(() => {
 .modal {
     width: 400px;
     padding: 1rem;
-
-    .border-item {
-        border-radius: 0.25rem;
-        padding: 0.4rem;
-        box-shadow: 0 0 2px 1px rgba($color: #fff, $alpha: 0.2);
-    }
 }
 </style>
