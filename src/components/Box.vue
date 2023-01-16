@@ -45,6 +45,8 @@ function folderOpenToggle() {
     position: relative;
     width: 120px;
     height: 120px;
+    padding: 0.7rem;
+    box-sizing: border-box;
     // box-shadow: 0 0 3px 1px rgba($color: #000000, $alpha: 0.6);
     cursor: pointer;
     &:hover {
@@ -66,6 +68,8 @@ function folderOpenToggle() {
     position: relative;
     width: 120px;
     height: 120px;
+    padding: 0.7rem;
+    box-sizing: border-box;
     cursor: pointer;
     transition: 0.5s;
     clip-path: polygon(
