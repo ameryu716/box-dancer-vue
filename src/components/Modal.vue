@@ -5,7 +5,7 @@
         :on-after-leave="close"
         :mask-closable="false"
     >
-        <div>
+        <n-card>
             <div class="fl">
                 <h2>{{ title }}</h2>
                 <n-button class="ms-auto" @click="close" strong secondary>
@@ -52,7 +52,7 @@
                     </n-form-item>
                 </div>
             </n-form>
-        </div>
+        </n-card>
     </n-modal>
 </template>
 <script lang="ts" setup>
@@ -106,13 +106,16 @@ const rules = {
         },
     },
     url: {
-        required: true,
+        required: false,
         // message: "URLを入力してください。",
         trigger: ["input", "blur"],
         validator(rule: FormItemRule, value: string) {
+            if(form.is_folder) return true;
+            if(value.length === 0) {
+                return new Error("URLwonyuuryokusitekudasai.");
+            }
             const regex =
                 /https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+/g;
-            console.log("A");
 
             if (!regex.test(value)) {
                 return new Error("URL形式が正しくありません。");

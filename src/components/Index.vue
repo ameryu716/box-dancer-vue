@@ -30,6 +30,21 @@
                     <n-icon size="28"><json /></n-icon>
                 </template>
             </n-button>
+
+            <n-color-picker
+                class="ms-2"
+                style="width: 60px"
+                v-model:value="set_color"
+                :swatches="[
+                    '#FFFFFF',
+                    '#18A058',
+                    '#2080F0',
+                    '#F0A020',
+                    'rgba(208, 48, 80, 1)',
+                ]"
+            >
+                <template #label></template>
+            </n-color-picker>
         </header>
         <main>
             <box
@@ -87,6 +102,7 @@ const json_data = ref("");
 const message = useMessage();
 
 const default_box_color = ref("#00000099");
+// "#f32f9399"
 const set_color = ref("#f32f9399");
 
 /**
