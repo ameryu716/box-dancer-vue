@@ -6,6 +6,8 @@ class Bubble {
     y: number;
     float_speed: number;
     opacity: number;
+    is_noizy: boolean;
+
     constructor(
         id: number,
         size: number,
@@ -20,6 +22,7 @@ class Bubble {
         this.y = y;
         this.float_speed = float_speed;
         this.opacity = 0.3;
+        this.is_noizy = Math.random() < 0.4;
     }
 
     float() {
@@ -49,53 +52,56 @@ function draw() {
         b.float();
         // Path
 
-        const rect_radius = Math.random() * 20 + 4;
-        ctx.beginPath();
-        ctx.moveTo(b.x + rect_radius, b.y);
-        ctx.lineTo(b.x + b.size - rect_radius, b.y);
-        ctx.arc(
-            b.x + b.size - rect_radius,
-            b.y + rect_radius,
-            rect_radius,
-            Math.PI * (3 / 2),
-            0,
-            false
-        );
-        ctx.lineTo(b.x + b.size, b.y + b.size - rect_radius);
-        ctx.arc(
-            b.x + b.size - rect_radius,
-            b.y + b.size - rect_radius,
-            rect_radius,
-            0,
-            Math.PI * (1 / 2),
-            false
-        );
-        ctx.lineTo(b.x + rect_radius, b.y + b.size);
-        ctx.arc(
-            b.x + rect_radius,
-            b.y + b.size - rect_radius,
-            rect_radius,
-            Math.PI * (1 / 2),
-            Math.PI,
-            false
-        );
-        ctx.lineTo(b.x, b.y + rect_radius);
-        ctx.arc(
-            b.x + rect_radius,
-            b.y + rect_radius,
-            rect_radius,
-            Math.PI,
-            Math.PI * (3 / 2),
-            false
-        );
-
-        // //
-
-        // ctx.beginPath();
-        // ctx.arc(b.x, b.y, b.size, 0, 2 * Math.PI, false);
-        ctx.fillStyle = `rgba(255,255,255,${b.opacity})`;
-        ctx.fill();
-        ctx.closePath();
+        if (b.is_noizy) {
+            const rect_radius = Math.random() * 20 + 4;
+            ctx.beginPath();
+            ctx.moveTo(b.x + rect_radius, b.y);
+            ctx.lineTo(b.x + b.size - rect_radius, b.y);
+            ctx.arc(
+                b.x + b.size - rect_radius,
+                b.y + rect_radius,
+                rect_radius,
+                Math.PI * (3 / 2),
+                0,
+                false
+            );
+            ctx.lineTo(b.x + b.size, b.y + b.size - rect_radius);
+            ctx.arc(
+                b.x + b.size - rect_radius,
+                b.y + b.size - rect_radius,
+                rect_radius,
+                0,
+                Math.PI * (1 / 2),
+                false
+            );
+            ctx.lineTo(b.x + rect_radius, b.y + b.size);
+            ctx.arc(
+                b.x + rect_radius,
+                b.y + b.size - rect_radius,
+                rect_radius,
+                Math.PI * (1 / 2),
+                Math.PI,
+                false
+            );
+            ctx.lineTo(b.x, b.y + rect_radius);
+            ctx.arc(
+                b.x + rect_radius,
+                b.y + rect_radius,
+                rect_radius,
+                Math.PI,
+                Math.PI * (3 / 2),
+                false
+            );
+            ctx.fillStyle = `rgba(255,255,255,${b.opacity})`;
+            ctx.fill();
+            ctx.closePath();
+        } else {
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.size, 0, 2 * Math.PI, false);
+            ctx.fillStyle = `rgba(255,255,255,${b.opacity})`;
+            ctx.fill();
+            ctx.closePath();
+        }
 
         // Path
 
