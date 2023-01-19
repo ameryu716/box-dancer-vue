@@ -56,7 +56,6 @@
     </n-modal>
 </template>
 <script lang="ts" setup>
-import { getDate } from "date-fns";
 import { FormInst, FormItemRule, useMessage } from "naive-ui";
 import { computed, onMounted, reactive, ref, unref } from "vue";
 import { getMemory } from "../scripts/util";

@@ -47,16 +47,18 @@
             </n-color-picker>
         </header>
         <main>
-            <box
-                v-for="(b, index) in assembled_data"
-                :name="b.name"
-                :url="b.url"
-                :is_folder="b.is_folder"
-                :is_open="b.is_open"
-                :color="index % 2 === 1 ? set_color : default_box_color"
-                v-show="!b.hide"
-                @folder-open-toggle="folderOpenToggle(b.id)"
-            />
+            <transition-group name="flip-list">
+                <box
+                    v-for="(b, index) in assembled_data"
+                    :name="b.name"
+                    :url="b.url"
+                    :is_folder="b.is_folder"
+                    :is_open="b.is_open"
+                    :color="index % 2 === 1 ? set_color : default_box_color"
+                    v-show="!b.hide"
+                    @folder-open-toggle="folderOpenToggle(b.id)"
+                />
+            </transition-group>
 
             <creation-box @create-modal-open="openModal(0)" />
             <modal
@@ -74,7 +76,7 @@
 </template>
 <script lang="ts" setup>
 // Framework
-import { computed, onMounted, ref, unref } from "vue";
+import { computed, nextTick, onMounted, ref, unref } from "vue";
 import { DataTable, Json } from "@vicons/carbon";
 import { useMessage } from "naive-ui";
 // Any
@@ -92,6 +94,7 @@ import CreationBox from "./CreationBox.vue";
 import Modal from "./Modal.vue";
 import editTable from "./edit-table.vue";
 import JsonView from "./JsonView.vue";
+import { draw, add } from "../scripts/canvas/bubble";
 
 const boxes = ref<type_assembled_box[]>([]);
 const modal_show = ref(false);
@@ -192,6 +195,12 @@ function folderOpenToggle(id: number) {
 onMounted(() => {
     refresh();
 });
+
+setInterval(() => {
+    add();
+}, 2000);
+
+draw();
 </script>
 <style lang="scss">
 @use "../color.scss" as color;
@@ -217,7 +226,12 @@ onMounted(() => {
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 1.5rem 3rem;
+        align-content: start;
     }
+}
+
+.flip-list-move {
+    transition: transform 0.8s ease;
 }
 </style>

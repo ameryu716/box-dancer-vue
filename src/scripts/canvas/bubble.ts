@@ -74,8 +74,4 @@ function add() {
     );
 }
 
-setInterval(() => {
-    add();
-}, 2000);
-
-draw();
+export { add, draw };

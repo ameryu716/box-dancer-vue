@@ -1,7 +1,7 @@
 <template>
-    <n-modal v-model:show="is_show" class="modal">
+    <n-modal v-model:show="is_show" class="modal" :on-after-leave="close">
         <n-card
-            style="width: 1050px; height: 600px"
+            style="width: 1150px; height: 650px"
             title="編集"
             :bordered="false"
             size="huge"
@@ -13,7 +13,13 @@
                     <n-icon size="24"><close-icon /></n-icon>
                 </n-button>
             </template>
-            <n-data-table :columns="columns" :data="data" :row-key="rowKey" />
+            <n-data-table
+                :columns="columns"
+                :data="data"
+                :row-key="rowKey"
+                :max-height="400"
+                :virtual-scroll="true"
+            />
             <template #footer>
                 <div class="fl">
                     <n-button type="info" @click="addRow"
