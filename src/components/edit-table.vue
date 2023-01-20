@@ -254,12 +254,10 @@ function close() {
 }
 
 async function enter() {
-    await niConfirm(dialog, "info", "確定", "本当に保存しますか？").then(
-        (r) => {
-            setMemory(data.value);
-            message.success("保存しました。");
-        }
-    );
+    await niConfirm("info", "確定", "本当に保存しますか？").then((r) => {
+        setMemory(data.value);
+        message.success("保存しました。");
+    });
 }
 
 onMounted(() => {

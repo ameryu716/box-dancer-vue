@@ -43,12 +43,13 @@ function folderOpenToggle() {
 
 .box {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
     padding: 0.7rem;
     box-sizing: border-box;
     // box-shadow: 0 0 3px 1px rgba($color: #000000, $alpha: 0.6);
     cursor: pointer;
+    font-size: 1rem;
     &:hover {
         filter: drop-shadow(0 0 1em color.$glass);
         @media (prefers-color-scheme: dark) {
@@ -66,8 +67,8 @@ function folderOpenToggle() {
 
 .folder-box {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
     padding: 0.7rem;
     box-sizing: border-box;
     cursor: pointer;
@@ -82,6 +83,7 @@ function folderOpenToggle() {
         0px 0
     );
     border: solid 2px rgba($color: #59a2dd, $alpha: 0.8);
+    font-size: 1rem;
     &:hover {
         filter: drop-shadow(0 0 1em color.$glass);
         @media (prefers-color-scheme: dark) {

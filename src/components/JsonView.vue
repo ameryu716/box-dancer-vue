@@ -65,7 +65,6 @@ function close() {
 
 function saveData() {
     niConfirm(
-        dialog,
         "warn",
         "JSONインポート",
         "JSONインポート機能は破壊的です。誤ったデータをインポートすると全てのボックスの表示が中断されます。\n使用には細心の注意を払い、自己責任で行ってください。",

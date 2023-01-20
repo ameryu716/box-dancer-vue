@@ -7,9 +7,19 @@
 </template>
 <script setup lang="ts">
 import Index from "./components/Index.vue";
-import { darkTheme } from "naive-ui";
+import {
+    ConfigProviderProps,
+    darkTheme,
+    DialogApi,
+    DialogProviderProps,
+    LoadingBarApi,
+    LoadingBarProviderProps,
+    MessageApi,
+    MessageProviderProps,
+    NotificationProviderProps,
+} from "naive-ui";
 import type { GlobalTheme } from "naive-ui";
-import { onMounted, ref } from "vue";
+import { onMounted, Ref, ref } from "vue";
 
 const theme = ref<GlobalTheme | null>(null);
 

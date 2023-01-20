@@ -44,7 +44,7 @@ const ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
 let bubbles = <Bubble[]>[];
 
 function draw() {
-    console.count("draw");
+    // console.count("draw");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "rgba(100,150,255,0.2)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);

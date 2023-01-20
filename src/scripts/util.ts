@@ -1,11 +1,24 @@
 import { useMessage } from "naive-ui";
-import { type_box } from "../types";
+import { type_box, type_config } from "../types";
+import {
+    createDiscreteApi,
+    ConfigProviderProps,
+    darkTheme,
+    lightTheme,
+} from "naive-ui";
 
-const local_storage_key = import.meta.env.VITE_LOCAL_STORAGE_KEY;
-const message = useMessage();
+const { message, notification, dialog, loadingBar } = createDiscreteApi([
+    "message",
+    "dialog",
+    "notification",
+    "loadingBar",
+]);
+
+const local_storage_key_boxes = import.meta.env.VITE_LOCAL_STORAGE_KEY_BOXES;
+const local_storage_key_config = import.meta.env.VITE_LOCAL_STORAGE_KEY_CONFIG;
 
 function getMemory() {
-    const data = localStorage.getItem(local_storage_key);
+    const data = localStorage.getItem(local_storage_key_boxes);
 
     if (data === null) return [];
 
@@ -15,11 +28,12 @@ function getMemory() {
 function setMemory(data: type_box[]) {
     const after = JSON.stringify(data);
 
-    localStorage.setItem(local_storage_key, after);
+    localStorage.setItem(local_storage_key_boxes, after);
+    message.success("保存しました。");
 }
 
 function setMemoryFromJson(json: string) {
-    localStorage.setItem(local_storage_key, json);
+    localStorage.setItem(local_storage_key_boxes, json);
 }
 
 function createBox(object_data: type_box) {
@@ -32,13 +46,34 @@ function createBox(object_data: type_box) {
 
     const to_send = JSON.stringify(data);
 
-    localStorage.setItem(local_storage_key, to_send);
+    localStorage.setItem(local_storage_key_boxes, to_send);
+    message.success("作成しました。");
+}
+
+const initial_config: type_config = {
+    color: "#f32f9399",
+    short_cuts: [],
+    canvas_type: null,
+};
+
+function getConfig() {
+    const data = localStorage.getItem(local_storage_key_config);
+
+    if (data === null) return initial_config;
+
+    return { ...initial_config, ...JSON.parse(data) };
+}
+
+function setConfig(config: type_config) {
+    const data = JSON.stringify(config);
+
+    localStorage.setItem(local_storage_key_config, data);
+    message.success("保存しました。");
 }
 
 type confirm_type = "info" | "warn" | "error" | "success";
 
 async function niConfirm(
-    dialog: any,
     type: confirm_type,
     title = "",
     message = "",
@@ -81,17 +116,22 @@ function copy(text: string | undefined | null) {
 
     if (navigator.clipboard) {
         navigator.clipboard.writeText(text);
+        message.info("コピーしました。");
     } else {
         throw new Error("コピーできませんでした。");
     }
 }
 
 export {
-    local_storage_key,
+    local_storage_key_boxes,
     createBox,
     getMemory,
     setMemory,
     niConfirm,
     copy,
     setMemoryFromJson,
+    getConfig,
+    setConfig,
+    initial_config,
+    message,
 };

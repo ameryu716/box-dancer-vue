@@ -23,4 +23,15 @@ interface type_assembled_box {
     hide: boolean;
 }
 
-export { type_box, type_creation_box, type_assembled_box };
+interface type_config {
+    color: string;
+    short_cuts: type_shortcut_config[];
+    canvas_type: null | number;
+}
+
+interface type_shortcut_config {
+    key: string;
+    box_id: null | number;
+}
+
+export { type_box, type_creation_box, type_assembled_box, type_config };
