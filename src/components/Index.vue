@@ -47,6 +47,7 @@
             <transition-group name="flip-list">
                 <box
                     v-for="(b, index) in assembled_data"
+                    :key="b.id"
                     :id="'box-' + b.id"
                     :name="b.name"
                     :url="b.url"
@@ -130,8 +131,6 @@ const assembled_data = computed(() => {
         )
     );
 
-    console.log(_boxes.length);
-
     const assembled = [..._boxes];
 
     return assembled;
@@ -146,11 +145,19 @@ const link_boxes = computed(() => {
  */
 
 function refresh() {
-    boxes.value = getMemory().map((b: type_assembled_box) => {
-        b.hide = b.parent_id !== null; //子
-        b.is_open = false; //フォルダー
-        return b;
-    });
+    boxes.value = getMemory()
+        .map((b: type_assembled_box) => {
+            b.hide = b.parent_id !== null; //子
+            b.is_open = false; //フォルダー
+            return b;
+        })
+        .sort((a: type_assembled_box, b: type_assembled_box) => {
+            if (a.parent_id === null || b.parent_id === null) {
+                return 0;
+            } else {
+                return b.parent_id - a.parent_id;
+            }
+        });
 }
 
 function openModal(id: number) {
@@ -202,7 +209,6 @@ function shortCutSet() {
                     use_message.warning("ショートカット起動に失敗しました。");
                     return;
                 }
-                console.log("r");
                 const link_anchor = box_element.getElementsByTagName("a")[0];
 
                 link_anchor.click();
