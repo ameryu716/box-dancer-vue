@@ -147,6 +147,10 @@ const canvasSelection = computed(() => {
             label: "Bubble",
             value: 1,
         },
+        {
+            label: "StarNight",
+            value: 2,
+        },
     ];
 });
 

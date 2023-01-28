@@ -101,7 +101,8 @@ import Modal from "./Modal.vue";
 import editTable from "./edit-table.vue";
 import JsonView from "./JsonView.vue";
 import Config from "./Config.vue";
-import { draw, add } from "../scripts/canvas/bubble";
+import { set as setBubbleFloat } from "../scripts/canvas/bubble";
+import { set as setStarNight } from "../scripts/canvas/star-night";
 
 const boxes = ref<type_assembled_box[]>([]);
 const modal_show = ref(false);
@@ -246,12 +247,16 @@ onMounted(() => {
     refresh();
     shortCutSet();
 
-    if (config.value.canvas_type === 1) {
-        setInterval(() => {
-            add();
-        }, 2000);
+    switch (config.value.canvas_type) {
+        case 1:
+            setBubbleFloat();
+            break;
+        case 2:
+            setStarNight();
+            break;
 
-        draw();
+        default:
+            break;
     }
 });
 </script>

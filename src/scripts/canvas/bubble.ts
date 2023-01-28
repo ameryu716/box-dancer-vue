@@ -127,4 +127,12 @@ function add() {
     );
 }
 
-export { add, draw };
+function set(interval = 2000) {
+    setInterval(() => {
+        add();
+    }, interval);
+
+    draw();
+}
+
+export { set };
