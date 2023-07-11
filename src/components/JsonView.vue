@@ -1,43 +1,49 @@
 <template>
     <n-modal width="600px" v-model:show="is_show" :on-after-leave="close">
-        <n-card style="width: 700px; height: 500px" class="card">
-            <div class="y-wrapper">
-                <n-code v-if="!import_mode" :code="json" :word-wrap="true" />
-                <div class="mt-2 fl j-end" v-if="!import_mode">
-                    <n-button @click="copy(json)">
-                        <n-icon>
-                            <cpicon />
-                        </n-icon>
-                    </n-button>
-                </div>
-                <n-input
-                    v-if="import_mode"
-                    v-model:value="edit_json"
-                    type="textarea"
-                    style="height: 400px"
-                />
-            </div>
+        <n-card class="card" style="width: 700px; height: 500px">
+            <div class="card-wrapper">
+                <div class="y-wrapper">
+                    <n-code
+                        v-if="!import_mode"
+                        :code="json"
+                        :word-wrap="true"
+                    />
 
-            <div class="float fl">
-                <div class="border-item">
-                    インポートモード
-                    <n-switch
-                        class="ms-2"
-                        :round="false"
-                        v-model:value="import_mode"
+                    <n-input
+                        v-if="import_mode"
+                        v-model:value="edit_json"
+                        type="textarea"
+                        style="height: 400px"
                     />
                 </div>
+                <div class="fl mt-3">
+                    <div class="border-item">
+                        インポートモード
+                        <n-switch
+                            class="ms-2"
+                            :round="false"
+                            v-model:value="import_mode"
+                        />
+                    </div>
 
-                <n-button
-                    class="ms-auto"
-                    v-if="import_mode"
-                    @click="saveData"
-                    type="warning"
-                    strong
-                    secondary
-                >
-                    Import
-                </n-button>
+                    <n-button
+                        class="ms-2"
+                        v-if="import_mode"
+                        @click="saveData"
+                        type="warning"
+                        strong
+                        secondary
+                    >
+                        Import
+                    </n-button>
+                    <div class="ms-auto fl j-end" v-if="!import_mode">
+                        <n-button @click="copy(json)">
+                            <n-icon>
+                                <cpicon />
+                            </n-icon>
+                        </n-button>
+                    </div>
+                </div>
             </div>
         </n-card>
     </n-modal>
@@ -63,8 +69,8 @@ function close() {
     emits("close");
 }
 
-function saveData() {
-    niConfirm(
+async function saveData() {
+    await niConfirm(
         "warn",
         "JSONインポート",
         "JSONインポート機能は破壊的です。誤ったデータをインポートすると全てのボックスの表示が中断されます。\n使用には細心の注意を払い、自己責任で行ってください。",
@@ -83,13 +89,13 @@ onMounted(() => {
 <style lang="scss" scoped>
 .card {
     position: relative;
-    .float {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        padding: 1rem;
-        box-sizing: border-box;
+    .card-wrapper {
+        height: 500px;
+
+        .y-wrapper {
+            height: 80%;
+            overflow-y: scroll;
+        }
     }
 }
 </style>

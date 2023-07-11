@@ -21,6 +21,7 @@ interface type_assembled_box {
     is_open: boolean;
     is_folder: boolean;
     hide: boolean;
+    sort_id?: number;
 }
 
 interface type_config {

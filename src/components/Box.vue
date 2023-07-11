@@ -1,29 +1,29 @@
 <template>
     <div
-        v-if="is_folder"
+        v-if="data.is_folder"
         class="folder-box fl j-c"
-        :class="{ 'is-open': is_open }"
+        :class="{ 'is-open': data.is_open }"
         @click="folderOpenToggle"
     >
-        <span>{{ name }}</span>
+        <span>{{ data.name }}</span>
+        <b>{{ data.id }}</b>
     </div>
     <div
         v-else
         class="box fl j-c"
         :style="{ 'box-shadow': '0 0 3px 1px ' + color }"
     >
-        <span>{{ name }}</span>
-        <a :href="url" target="_blank"></a>
+        <span>{{ data.name }}</span>
+        <b>{{ data.id }}</b>
+        <a :href="data.url" target="_blank"></a>
     </div>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
+import { type_assembled_box } from "../types";
 
 const props = defineProps<{
-    url: string;
-    name: string;
-    is_folder: boolean;
-    is_open: boolean;
+    data: type_assembled_box;
     color: string;
 }>();
 
@@ -95,5 +95,11 @@ function folderOpenToggle() {
         border-color: rgba($color: #64dd59, $alpha: 0.8);
         transform: rotateZ(360deg);
     }
+}
+
+b {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 </style>

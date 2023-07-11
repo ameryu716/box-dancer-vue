@@ -55,6 +55,7 @@
                                         <n-select
                                             v-model:value="s.box_id"
                                             :options="select_options"
+                                            key="id"
                                         />
                                     </div>
                                 </td>
@@ -103,6 +104,7 @@ import {
     getConfig,
     initial_config,
     message as use_message,
+    timer,
 } from "../scripts/util";
 import { type_config, type_assembled_box } from "../types";
 import { AddAlt, Add, Delete } from "@vicons/carbon";
@@ -130,6 +132,8 @@ const is_show = ref(false);
 
 const select_options = computed(() => {
     return props.boxes.map((b) => {
+        console.log(b.id);
+
         return {
             label: b.name,
             value: b.id,
@@ -162,7 +166,7 @@ function close() {
     emits("close");
 }
 
-function saveConfig() {
+async function saveConfig() {
     if (
         config.value.short_cuts.every((s) => {
             return (
@@ -173,9 +177,8 @@ function saveConfig() {
         })
     ) {
         save(config.value);
-        setTimeout(() => {
-            location.reload();
-        }, 500);
+        await timer(500);
+        location.reload();
     } else {
         use_message.warning("ショートカットに重複したキーは登録できません。");
     }

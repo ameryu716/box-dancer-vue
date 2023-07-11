@@ -25,15 +25,22 @@ function getMemory() {
     return JSON.parse(data);
 }
 
-function setMemory(data: type_box[]) {
+async function setMemory(data: type_box[]) {
     const after = JSON.stringify(data);
 
     localStorage.setItem(local_storage_key_boxes, after);
     message.success("保存しました。");
+
+    await timer(2000);
+    location.reload();
 }
 
-function setMemoryFromJson(json: string) {
+async function setMemoryFromJson(json: string) {
     localStorage.setItem(local_storage_key_boxes, json);
+    message.success("保存しました。");
+
+    await timer(2000);
+    location.reload();
 }
 
 function createBox(object_data: type_box) {
@@ -122,6 +129,14 @@ function copy(text: string | undefined | null) {
     }
 }
 
+async function timer(duration: number = 1000): Promise<void> {
+    return new Promise((res) => {
+        setTimeout(() => {
+            res();
+        }, duration);
+    });
+}
+
 export {
     local_storage_key_boxes,
     createBox,
@@ -134,4 +149,5 @@ export {
     setConfig,
     initial_config,
     message,
+    timer,
 };

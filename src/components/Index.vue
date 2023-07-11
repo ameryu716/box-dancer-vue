@@ -48,11 +48,7 @@
                 <box
                     v-for="(b, index) in assembled_data"
                     :key="b.id"
-                    :id="'box-' + b.id"
-                    :name="b.name"
-                    :url="b.url"
-                    :is_folder="b.is_folder"
-                    :is_open="b.is_open"
+                    :data="b"
                     :color="index % 2 === 1 ? config.color : default_box_color"
                     v-show="!b.hide"
                     @folder-open-toggle="folderOpenToggle(b.id)"
@@ -82,7 +78,7 @@
 <script lang="ts" setup>
 // Framework
 import { computed, nextTick, onMounted, ref, unref } from "vue";
-import { DataTable, Json, Settings } from "@vicons/carbon";
+import { DataTable, Json, Settings, Timer } from "@vicons/carbon";
 // Any
 import {
     getMemory,
@@ -90,6 +86,9 @@ import {
     initial_config,
     getConfig,
     message as use_message,
+    setMemory,
+    message,
+    timer,
 } from "../scripts/util";
 // Type
 import { type_box, type_assembled_box } from "../types";
@@ -124,11 +123,33 @@ const config = ref(initial_config);
 const assembled_data = computed(() => {
     const _boxes: type_assembled_box[] = JSON.parse(
         JSON.stringify(
-            [...unref(boxes)].map((b) => {
-                return {
-                    ...b,
-                };
-            })
+            [...unref(boxes)]
+                .map((b) => {
+                    let sort_id =
+                        b.is_folder || b.parent_id === null
+                            ? b.id
+                            : b.parent_id;
+
+                    return {
+                        ...b,
+                        ...{
+                            sort_id: sort_id,
+                        },
+                    };
+                })
+                .sort((a: type_assembled_box, b: type_assembled_box) => {
+                    if (!a.sort_id || !b.sort_id) {
+                        return 0;
+                    } else if (
+                        a.is_folder &&
+                        !b.is_folder &&
+                        a.id === b.parent_id
+                    ) {
+                        return -1;
+                    } else {
+                        return a.sort_id - b.sort_id;
+                    }
+                })
         )
     );
 
@@ -146,19 +167,38 @@ const link_boxes = computed(() => {
  */
 
 function refresh() {
-    boxes.value = getMemory()
-        .map((b: type_assembled_box) => {
-            b.hide = b.parent_id !== null; //子
-            b.is_open = false; //フォルダー
-            return b;
-        })
-        .sort((a: type_assembled_box, b: type_assembled_box) => {
-            if (a.parent_id === null || b.parent_id === null) {
-                return 0;
-            } else {
-                return b.parent_id - a.parent_id;
-            }
+    const data = getMemory().map((b: type_assembled_box) => {
+        b.hide = b.parent_id !== null; //子
+        b.is_open = false; //フォルダー
+        return b;
+    });
+
+    const box_ids = new Set([...data.map((box: type_assembled_box) => box.id)]);
+    if (data.length !== box_ids.size) {
+        reBuildByBoxesKey(data);
+        return;
+    }
+
+    boxes.value = data;
+}
+
+async function reBuildByBoxesKey(data: type_assembled_box[]) {
+    message.warning("Re:building...");
+    const writing = data.map((box, i) => {
+        const new_id = i + 1;
+        data.filter((d) => d.parent_id === box.id).forEach((d) => {
+            d.parent_id = new_id;
         });
+        return {
+            ...box,
+            ...{ id: new_id },
+        };
+    });
+    console.table(writing);
+    // return;
+    setMemory(writing);
+    await timer(3000);
+    location.reload();
 }
 
 function openModal(id: number) {
